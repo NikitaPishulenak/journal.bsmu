@@ -63,9 +63,8 @@ $(function () {
 // });
 
 $(function () {
-    var form, edit_dialog, edit_form, log_dialog, log_form;
+    var form, edit_dialog, edit_form, log_dialog, log_form, confirm_make_pay, confirm_make_form;
     var myStudentZapis = new Array();
-    var oldCheckedValue=0;
 
     //Форма выставления оценок
     edit_dialog = $("#form-edit").dialog({
@@ -79,8 +78,50 @@ $(function () {
         event.preventDefault();
     });
 
+    //Форма подтверждения оплаты
+confirm_make_pay = $("#form-make-pay").dialog({
+    resizable: false,
+    autoOpen: false,
+    height: 'auto',
+    width: 240,
+    modal: true,
+    buttons: {
+        "Да": function() {
+            $.ajax({
+                type: 'get',
+                url: 'd.php',
+                data: {
+                    'id_Zapis': elem.attr('data-zapis'),
+                    'menuactiv': "makePaid",
+                    'ajaxTrue': "1"
+                },
+                success: function(st) {
+                    if (st == "Access is denied!") {
+                        alert("Извините, время вашей рабочей сессии истекло. Пожалуйста, закройте браузер и заново авторизуйтесь.");
+                    } else if (st == "No access rights!") {
+                        alert("Не достаточно прав!");
+                    } else {
+                        location.reload();
+                    }
+                },
+                error: function() {
+                    alert("Произошла ошибка при передаче данных");
+                }
+            });
 
-    $('div').delegate(".grade", "dblclick", function () {
+            confirm_make_pay.dialog("close");
+        },
+        "Отмена": function() {
+            confirm_make_pay.dialog("close");
+        }
+    }
+});
+
+confirm_make_form = confirm_make_pay.find("form").on("submit", function(event) {
+    event.preventDefault();
+});
+
+    $('div').delegate(".grade", "dblclick", function (e) {
         var curStatus=$(this).attr("data-Status");
         $("button#edit").removeAttr('disabled');
         $("button#close").removeAttr('disabled');
@@ -90,7 +131,10 @@ $(function () {
         if (elem.text() != "") {
             var c_res = elem.text().split("/");
             for (var i = 0; i < c_res.length; i++) {
-                if ((absenteeisms.indexOf(c_res[i]) != -1) || (absenteeisms_with_cause.indexOf(c_res[i]) != -1)) {
+                if((e.altKey) && (curStatus==0) && (absenteeisms_with_cause[1]==c_res[i])){
+                    confirm_make_pay.dialog("open");
+                }
+                else if ((absenteeisms.indexOf(c_res[i]) != -1) || (absenteeisms_with_cause.indexOf(c_res[i]) != -1)) {
                     dat = $(this).parent().find('div.date_title').html();
                     student_id = $(this).attr('data-idStudent');
                     id_Less = $(this).attr('data-idLes');
@@ -113,67 +157,62 @@ $(function () {
                     cur_grade = $(this).text();
 
                     grades = cur_grade.split("/");
+                    $('input#inp_0').focus();
+                    
                     switch (curStatus) {
-                        case "0":
-                            var disab = 0;
-                            for (var i = 0; i < grades.length; i++) {
-                                $("#inp_" + i).removeAttr('disabled');
-                                $("div.panel").find('input#inp_' + i).slideDown(1);
-                                $("div.panel").find('input#inp_' + i).val(grades[i]);
-                                if (absenteeisms_with_cause[1] == grades[i]) {
-                                    disab = 1;
-                                    $("#inp_" + i).blur()
-                                }
+                    case "0":
+                        for (var i = 0; i < grades.length; i++) {
+                            $("#inp_" + i).removeAttr('disabled');
+                            $("div.panel").find('input#inp_' + i).slideDown(1);
+                            $("div.panel").find('input#inp_' + i).val(grades[i]);
+                            if ((absenteeisms.indexOf($("#inp_" + i).val()) == -1) && (absenteeisms_with_cause.indexOf($("#inp_" + i).val()) == -1)){
+                                $("#inp_" + i).attr('disabled', 'disabled');
+                                $("#inp_" + i).blur();
                             }
-                            if (disab == 1) {
-                                $("input#isPaed").attr('disabled', false);
-                                $("button#add_grade_input").attr('disabled', true);
-                                $(".inp_cell").attr('disabled', 'disabled');
-                                $("div.check_pay").show(1);
-                            }
-                            else if(disab == 0){
-                                $("input#isPaed").attr('disabled', true);
-                                $("div.check_pay").hide(1);
-                            }
-                            
-                        break;
+                        }
+                    break;
 
-                        case "1":
-                            for (var i = 0; i < grades.length; i++) {
-                                $("div.panel").find('input#inp_' + i).slideDown(1);
-                                $("div.panel").find('input#inp_' + i).val(grades[i]);
-                                $("#inp_" + i).blur()
-                            }
-                            $("button#add_grade_input").attr('disabled', true);
-                            $(".inp_cell").attr('disabled', 'disabled');
-                            $("div.check_pay").hide(1);
-                        break;
+                    case "1":
+                        for (var i = 0; i < grades.length; i++) {
+                            $("div.panel").find('input#inp_' + i).slideDown(1);
+                            $("div.panel").find('input#inp_' + i).val(grades[i]);
+                            $("#inp_" + i).blur();
+                        }
+                        $(".inp_cell").attr('disabled', 'disabled');                      
+                    break;
 
-                        case "2":
-                            for (var i = 0; i < grades.length; i++) {
-                                $("#inp_" + i).removeAttr('disabled');
-                                $("div.panel").find('input#inp_' + i).slideDown(1);
-                                $("div.panel").find('input#inp_' + i).val(grades[i]);
-                                $("#inp_" + i).blur()
-                            }
-                            $("button#add_grade_input").attr('disabled', false);
-                            $("div.check_pay").hide(1);
-                        break
-                    }
+                    case "2":
+                        for (var i = 0; i < grades.length; i++) {
+                            $("div.panel").find('input#inp_' + i).slideDown(1);
+                            $("div.panel").find('input#inp_' + i).val(grades[i]);
+                            $("#inp_" + i).blur();
+                        }
+                        $(".inp_cell").attr('disabled', 'disabled');
+                    break;
+                }
                     
                     inp_id = -1;
                     $(".inp_cell:text").focus(function () {
                         inp_id = $(this).attr('id');
+
+                        $("b.tool").click(function () {
+                            var text = $(this).text();
+                            $("#" + inp_id+":enabled").val(text);
+                            $("#" + inp_id).blur();
+                        });
                     });
+
+//пробно закаментил
                     var countOpenCell = 0, enabled = false;
-                    for (j = 0; j < 3; j++) {
-                        $("#inp_" + j).removeAttr('disabled');
+                    for (var j = 0; j < 3; j++) {
+                        //$("#inp_" + j).removeAttr('disabled');
                         if ($("#inp_" + j).val() != "") {
                             countOpenCell++;
-                            if ((absenteeisms.indexOf($("#inp_" + j).val()) == -1) && (absenteeisms_with_cause.indexOf($("#inp_" + j).val()) == -1)) {
-                                $("#inp_" + j).attr('disabled', 'disabled');
-                            }
-                            else if (!enabled) {
+                            // if ((absenteeisms.indexOf($("#inp_" + j).val()) == -1) && (absenteeisms_with_cause.indexOf($("#inp_" + j).val()) == -1)) {
+                            //     $("#inp_" + j).attr('disabled', 'disabled');
+                            // }
+                            // else 
+                                if (!enabled) {
                                 $("#inp_" + j).focus();
                                 enabled = true;
                             }
@@ -188,37 +227,24 @@ $(function () {
                             }
                         }
                     });
+
+
                 }
             }
         }
     });
 
-    $("b.tool").click(function () {
-        var cur_id=$(this).attr('id');
-        var text = $(this).text();
-        $("#" + inp_id+":enabled").val(text);
-        $("#" + inp_id).blur();
-        if ((cur_id==1) || (cur_id==3)){
-            oldCheckedValue=($("input#isPaed").is(':checked')) ? "1" : "0";
-            $("input#isPaed").attr('disabled', true);
-            $("input#isPaed").prop('checked', false);
-        } 
-        else{
-            $("input#isPaed").attr('disabled', false);
-            (oldCheckedValue==1) ? $("input#isPaed").prop('checked', true) : "";
-        }     
-    });
+    // $("div.check_pay").click(function(e){
+    //     var countInp=$("input.inp_cell:visible");
+    //     var isActiv=false;
+    //     countInp.each(function(){
+    //         if($(this).val()=="Нн"){
+    //             isActiv=true;
+    //         }
+    //     });
+    //     (!isActiv) ? e.preventDefault() : "";
+    //  });
 
-    $("div.check_pay").click(function(e) {
-        var countInp = $("input.inp_cell:visible");
-        var isActiv = false;
-        countInp.each(function() { 
-            if ($(this).val() == "Нн"){ 
-                isActiv = true 
-            } 
-        });
-        (!isActiv) ? e.preventDefault(): "";
-    });
 
     $("#edit").click(function () {
         var coding = "";
@@ -237,12 +263,6 @@ $(function () {
             alert("�_�_�_из�_�_�>а �_�_и�+ка п�_и п���_���_а�+�� �_а�_�_�<�:");
         } else {
             if (id_Zapis == 0) id_Zapis = myStudentZapis[id_Less + 'Zapis' + student_id];
-            // if($("input#isPaed").is(':checked')){
-            //     consol
-            // }
-            // else{
-
-            // }
             $.ajax({
                 type: 'get',
                 url: 'd.php',
@@ -289,6 +309,7 @@ $(function () {
     $(".inp_cell:text").click(function () {
         $(this).select();
     });
+
 });
 
 

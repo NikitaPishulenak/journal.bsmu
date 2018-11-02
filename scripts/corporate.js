@@ -1,5 +1,6 @@
 ﻿$(document).ready(function () {
     //console.log(lang['hello'][0]);
+    $("div#form-make-pay").hide();
     hideHistory();
     path = window.location.pathname.slice(1);
     timeScroll = 2000;
