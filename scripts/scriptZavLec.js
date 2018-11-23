@@ -274,7 +274,9 @@
                 }
                 else{
                     if(id_Zapis == 0) id_Zapis = myStudentZapis[id_Less+'Zapis'+student_id];
-                    $.ajax({
+
+                    if(Encrypt(cur_grade)!=coding){
+                        $.ajax({
                         type:'get',
                         url:'z.php',
                         data:{
@@ -312,6 +314,8 @@
                         },
                         timeout:30000
                     });
+                    }
+                    
                 }
 
             }

@@ -1,6 +1,4 @@
 ﻿$(document).ready(function () {
-    //console.log(lang['hello'][0]);
-    $("div#form-make-pay").hide();
     hideHistory();
     path = window.location.pathname.slice(1);
     timeScroll = 2000;
@@ -13,7 +11,7 @@
     $("div.grade").each(function () {
         var isNn=$(this).attr('data-Nn');
         if (isNn==1){
-            $(this).append('<div class="bull"><img src="img/bull.png"></div>');
+            $(this).append('<div class="bull" title="Занятие ранее было пропущено"><img src="img/bull.png"></div>');
         } 
     });
 
@@ -236,7 +234,8 @@ $(function () {
             'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь',
             'Октябрь', 'Ноябрь', 'Декабрь'],
         dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-        maxDate: 0
+        maxDate: 0,
+        autoOpen: false
     };
     $('.datepicker').datepicker({dateFormat: 'dd.mm.yy', firstDay: 1});
     $.datepicker.setDefaults($.datepicker.regional['ru']);
@@ -359,10 +358,6 @@ items_grade = [
     ],
 ];
 
-lang = {
-    "hello": ["Приветик", "Helloy"],
-    "end": ["Конец", "END"]
-};
 
 //функция проверки введенных данных в поле оценка
 function proverka(event, id) {
@@ -902,6 +897,13 @@ function typeAbs(str){
         }
     }
     return res;
+}
+
+//Ф-я возврата сегодняшней даты
+function getCurrentDate(){
+    var cr_d = new Date();
+    var cr_dStr = cr_d.getDate() + "." + Number(cr_d.getMonth() + 1) + "." + cr_d.getFullYear();
+    return cr_dStr;
 }
 
 // //Ф-я с окном для подтверждения оплаты для декана ALT+dblclick

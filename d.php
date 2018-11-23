@@ -39,13 +39,15 @@ if(isset($_GET['idF']) && $_SESSION['SesVar']['Dekan'][2]!=$_GET['idF']){
 if(isset($_GET['menuactiv'])){
     switch($_GET['menuactiv']) {
 
-        case "Kurs":
-            Kurs();
-            break;
-
         case "makePaid":
             if(isset($_GET['id_Zapis']) && is_numeric($_GET['id_Zapis']) && isset($_GET['ajaxTrue']) && $_GET['ajaxTrue']){
                VirtualPay($_GET['id_Zapis']);
+            }
+            break;
+
+        case "editGroupInfo":
+            if(isset($_GET['idGroup']) && is_numeric($_GET['idGroup']) && isset($_GET['ajaxTrue']) && $_GET['ajaxTrue']){
+               ViewKurs($_GET['idGroup']);
             }
             break;
 
@@ -98,19 +100,107 @@ if(isset($_GET['menuactiv'])){
             break;
 
         default:
-            MainF();
+            if(isset($_GET['v']) && $_GET['v']=='a'){
+               MainF();
+            } else {
+               ((isset($_GET['k']) && is_numeric($_GET['k']) && $_GET['k']<=6 && $_GET['k']>0) ? Kurs($_GET['k']) : Kurs());
+            }
             break;
     }
 }else{
-    MainF();
+   if(isset($_GET['v']) && $_GET['v']=='a'){ MainF(); } else { ((isset($_GET['k']) && is_numeric($_GET['k']) && $_GET['k']<=6 && $_GET['k']>0) ? Kurs($_GET['k']) : Kurs()); }
 }
 
 //----------------------------------------------------------------------------------------------
 
 
-function Kurs(){
+function ViewKurs($idG){
+   include_once 'configStudent.php';
+   include_once 'configMain.php';
+                                      
+   $result = mssql_query("SELECT IdStud, IIF(LEN(CONCAT(Name_F,' ',Name_I,' ',Name_O))>30,CONCAT(LEFT(CONCAT(Name_F,' ',Name_I,' ',Name_O), 27),'...'),CONCAT(Name_F,' ',Name_I,' ',Name_O)) FROM dbo.Student WHERE IdGroup=".$idG." AND IdStatus IS NULL ORDER BY Name_F",$dbStud);
+   if(mssql_num_rows($result)>=1){
+      $retVal = "";
+      while($arrStud = mssql_fetch_row($result)){
+         $ress = mysqli_query($dbMain, "SELECT SUM(n20+n22), SUM(n21), SUM(ABS((n26+n31+n32+n33+n34+n35+n36+n37+n40+n41+n42+n43+n44+n45)-(n20+n21+n22))) FROM aerostat WHERE idStud=".$arrStud[0]." AND idFak=".$_SESSION['SesVar']['Dekan'][2]." GROUP BY idStud,idLessons");
+            list($cntOc,$cntOcD,$cntOcC) = mysqli_fetch_row($ress);
+            if($arrStud[0] == $_GET['idCaptain']){
+               $retVal.="<div class='DialogKurs' data-idStudent='".$arrStud[0]."' title='Капитан шлюпки'><strong>".$arrStud[1]."</strong>"
+.($cntOcC ? "<div class='CVC' title='Пропуски: ".$cntOcC."'>".$cntOcC."</div>\n" : "").($cntOc ? "<div class='CV' title='Ну+Нб.о: ".$cntOc."'>".$cntOc."</div>\n" : "").($cntOcD ? "<div class='CVD' title='Нн: ".$cntOcD."'>".$cntOcD."</div>\n" : "")."\n</div>\n";
+            } else {
+               $retVal.="<div class='DialogKurs' data-idStudent='".$arrStud[0]."'>".$arrStud[1]
+.($cntOcC ? "<div class='CVC' title='Пропуски: ".$cntOcC."'>".$cntOcC."</div>\n" : "").($cntOc ? "<div class='CV' title='Ну+Нб.о: ".$cntOc."'>".$cntOc."</div>\n" : "").($cntOcD ? "<div class='CVD' title='Нн: ".$cntOcD."'>".$cntOcD."</div>\n" : "")."\n</div>\n";
+            }
+         }
+      echo $retVal;
+   }
 
 }
+
+
+function Kurs($k=1){
+
+    $retVal="<p>".$_SESSION['SesVar']['Dekan'][0]." (".$_SESSION['SesVar']['Dekan'][1].")</p><hr>".FormSearch();
+    $retVal.="
+      <div class='DialogP'>
+      <div class='titleBox'><H2>По курсам&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;<a href='d.php?v=a'>По дисциплинам</a></H2></div>
+      <div class='Kurs'>
+   ";
+
+    include_once 'config.php';
+    include_once 'configStudent.php';
+
+    if ($_SESSION['SesVar']['Dekan'][2] == 283) {
+       $och=round($fac[283][1]/12); $zaoch=ceil($fac[283][3]/12);
+       if(var_dump($zaoch>=$och)){ $countK=$zaoch-1; } else { $countK=$och-1; }
+    } else {
+       $countK=floor($fac[$_SESSION['SesVar']['Dekan'][2]][1]/12)-1;
+    }
+
+
+      for($iS=0; $iS<=$countK; $iS++){
+         if(($iS+1) == $k){
+           $retVal.="<div class='KursCount Curr'>".($iS+1)."-й</div>";   
+         } else {
+           $retVal.="<a href='d.php?k=".($iS+1)."&idPrepod=".$_SESSION['SesVar']['FIO'][0]."'><div class='KursCount'>".($iS+1)."-й</div></a>";
+         }
+      }
+      $retVal.="<div style='clear:both;'>&nbsp;</div>";
+
+
+
+            if ($_SESSION['SesVar']['Dekan'][2] == 283) {
+                $sqlS="(DATEDIFF(month,CONCAT(Year,'0101'),GETDATE())<".$fac[$_SESSION['SesVar']['Dekan'][2]][1]." OR DATEDIFF(month,CONCAT(Year,'0101'),GETDATE())<".$fac[$_SESSION['SesVar']['Dekan'][2]][3].")";
+            } else {
+               $sqlS="DATEDIFF(month,CONCAT(Year,'0101'),GETDATE())<".$fac[$_SESSION['SesVar']['Dekan'][2]][1];
+//                $sqlS="DATEDIFF(year,CONCAT(Year,'0101'),GETDATE())<=".$k;
+            }
+
+
+            $sqlSO="(IdF=".$_SESSION['SesVar']['Dekan'][2]." AND SUBSTRING(Name,2,1)='".$k."' AND ".$sqlS." AND LEN(Name)>=4)";
+            $result = mssql_query("SELECT IdGroup, Name, IIF(IdCaptain!=null, IdCaptain, 0), IIF(IdF != ".$_SESSION['SesVar']['Dekan'][2].", 1, 0) FROM dbo.Groups WHERE ".$sqlSO." ORDER BY Name", $dbStud);
+            if (mssql_num_rows($result) >= 1) {
+                $preChar = "";
+                while ($arr = mssql_fetch_row($result)) {
+                    if ($preChar != substr($arr[1], 0, 2)) $retVal .= "<div class='HRnext'></div>";
+                    $preChar = substr($arr[1], 0, 2);
+                    $retVal .= "<div class='DialogGrKurs' data-nGroup=".$arr[1]." data-idGroup=".$arr[0]." data-IdCaptain=".$arr[2]."><strong>".$arr[1]."</strong>".($arr[3] ? "<div class='Inostr' title='Группа иностранных учащихся'>и</div>" : "")."<span class='fullTextClose' title='Закрыть'>X</span>\n<div class='content_grade'></div></div>\n";
+                }
+            }
+
+
+
+
+    $retVal.="</div></div>\n";
+    echo HeaderFooterKurs($retVal, $_SESSION['SesVar']['Dekan'][0]." (".$_SESSION['SesVar']['Dekan'][1].")", $verC, $verS);
+}
+
+
+
+
+
+//----------------------------------------------------------------------------------------------
+
 
 
 function VirtualPayArray($idZapis){
@@ -232,16 +322,6 @@ function SearchGiveData()
     include_once 'config.php';
     include_once 'configStudent.php';
 
-    /*    $res = mysqli_query($dbMain, "SELECT A.id_lesson, B.name, IF(CHAR_LENGTH(B.name)>70,CONCAT(LEFT(B.name, 67),'...'),B.name),
-    (SELECT COUNT(C.id) FROM rating C WHERE (C.idLessons=A.id_lesson AND C.idStud=".$_GET['idSt']." AND C.del=0)
-     AND (C.RatingO LIKE '3%' OR C.RatingO LIKE '__3%' OR C.RatingO LIKE '____3%' OR C.RatingO LIKE '26%' OR C.RatingO LIKE '__26%' OR C.RatingO LIKE '____26')) FROM schedule A
-    LEFT JOIN lessons B ON B.id=A.id_lesson WHERE (A.course=".$_GET['kursSt']."
-    AND A.id_faculty=".$_SESSION['SesVar']['Dekan'][2].") OR (A.course=".$_GET['kursSt']." AND A.id_faculty=".$fac[$_GET['gfnS']].") GROUP BY A.id_lesson ORDER BY B.name");
-    */
-
-//    $start = microtime(true);
-//    $finish = microtime(true);
-//    $retVal.="<div style='clear:both'></div>\n".($finish - $start)." сек.";
 
     $res = mysqli_query($dbMain, "SELECT A.id_lesson, B.name, IF(CHAR_LENGTH(B.name)>70,CONCAT(LEFT(B.name, 67),'...'),B.name) FROM schedule A LEFT JOIN lessons B ON B.id=A.id_lesson WHERE A.course=".$_GET['kursSt']." AND A.id_faculty=".$_SESSION['SesVar']['Dekan'][2]." GROUP BY A.id_lesson ORDER BY B.name");
 
@@ -256,15 +336,9 @@ function SearchGiveData()
 
             $ress = mysqli_query($dbMain, "SELECT SUM(n20+n22), SUM(n21), SUM(ABS((n26+n31+n32+n33+n34+n35+n36+n37+n40+n41+n42+n43+n44+n45)-(n20+n21+n22))) FROM aerostat WHERE idLessons=".$arr[0]." AND idStud=".$_GET['idSt']." AND idFak=".$_SESSION['SesVar']['Dekan'][2]." GROUP BY idStud,idLessons");
             list($cntOc,$cntOcD,$cntOcC) = mysqli_fetch_row($ress);
-/*
-            $ress = mysqli_query($dbMain, "SELECT COUNT(id) FROM rating WHERE (idLessons=".$arr[0]." AND idStud=".$_GET['idSt']." AND del=0) AND (RatingO LIKE '3%' OR RatingO LIKE '__3%' OR RatingO LIKE '____3%' OR RatingO LIKE '4%' OR RatingO LIKE '__4%' OR RatingO LIKE '____4%' OR RatingO LIKE '26%' OR RatingO LIKE '__26%' OR RatingO LIKE '____26')");
-            list($cntOc) = mysqli_fetch_row($ress);
-            $ress = mysqli_query($dbMain, "SELECT COUNT(id) FROM rating WHERE (idLessons=".$arr[0]." AND idStud=".$_GET['idSt']." AND del=0) AND (RatingO LIKE '20%' OR RatingO LIKE '__20%' OR RatingO LIKE '____20' OR RatingO LIKE '21%' OR RatingO LIKE '__21%' OR RatingO LIKE '____21' OR RatingO LIKE '22%' OR RatingO LIKE '__22%' OR RatingO LIKE '____22')");
-            list($cntOcD) = mysqli_fetch_row($ress);
-*/
             $retVal.="<div class='DialogFakFak' data-idSubject='".$arr[0]."'>\n<span class='shortText'>".$arr[2]."</span>\n<span class='fullText'>".$arr[1]."</span>&nbsp;<span class='fullTextClose' title='Закрыть'>X</span>\n<div class='content_grade'></div>\n"
 .($cntOcC ? "<div class='COC' title='Пропуски: ".$cntOcC."'>".$cntOcC."</div>\n" : "").($cntOc ? "<div class='CO' title='Ну+Нб.о: ".$cntOc."'>".$cntOc."</div>\n" : "").($cntOcD ? "<div class='COD' title='Нн: ".$cntOcD."'>".$cntOcD."</div>\n" : "")."\n</div>\n";
-//            $retVal.="<div class='DialogFakFak' data-idSubject='".$arr[0]."'>\n<span class='shortText'>".$arr[2]."</span>\n<span class='fullText'>".$arr[1]."</span>&nbsp;<span class='fullTextClose' title='Закрыть'>X</span>\n<div class='content_grade'></div>\n".($cntOc ? "<div class='CO' title='Пропуски: ".$cntOc."'>".$cntOc."</div>\n" : "")."</div>\n";
+
         }
         unset($arr,$cntOc);
         mysqli_free_result($res);
@@ -380,7 +454,7 @@ function GroupViewL(){
     include_once 'configMain.php';
     $retVal="<p>".$_SESSION['SesVar']['Dekan'][0]." (".$_SESSION['SesVar']['Dekan'][1].")</p>";
 
-    $retVal .= "<h3><a href='d.php'>" . $_GET['nPredmet'] . "</a><br>&nbsp;<font color='#ff0000'>&darr;</font><br>";
+    $retVal .= "<h3><a href='d.php?v=a'>" . $_GET['nPredmet'] . "</a><br>&nbsp;<font color='#ff0000'>&darr;</font><br>";
     $retVal .= "<a href='d.php?menuactiv=goF&idPrepod=".$_SESSION['SesVar']['FIO'][0]."&idPredmet=".$_GET['idPredmet']."&idF=".$_SESSION['SesVar']['Dekan'][2]."'>".$_GET['nF']."</a><br>&nbsp;<font color='#ff0000'>&darr;</font><br>";
     $retVal.="Группа № ".$_GET['nGroup']." (<a href='d.php?menuactiv=goG&idPrepod=".$_SESSION['SesVar']['FIO'][0]."&idPredmet=".$_GET['idPredmet']."&idF=".$_SESSION['SesVar']['Dekan'][2]."&idGroup=".$_GET['idGroup']."&PL=0&nPredmet=".$_GET['nPredmet']."&nF=".$_GET['nF']."&nGroup=".$_GET['nGroup']."&IdCaptain=".$_GET['IdCaptain']."'>Практическое</a> / ЛЕКЦИЯ)</h3><hr>";
 
@@ -501,7 +575,7 @@ function GroupViewP(){
     include_once 'configMain.php';
     $retVal="<p>".$_SESSION['SesVar']['Dekan'][0]." (".$_SESSION['SesVar']['Dekan'][1].")</p>";
 
-    $retVal .= "<h3><a href='d.php'>".$_GET['nPredmet']."</a><br>&nbsp;<font color='#ff0000'>&darr;</font><br>";
+    $retVal .= "<h3><a href='d.php?v=a'>".$_GET['nPredmet']."</a><br>&nbsp;<font color='#ff0000'>&darr;</font><br>";
     $retVal .= "<a href='d.php?menuactiv=goF&idPrepod=".$_SESSION['SesVar']['FIO'][0]."&idPredmet=".$_GET['idPredmet']."&idF=".$_SESSION['SesVar']['Dekan'][2]."'>".$_GET['nF']."</a><br>&nbsp;<font color='#ff0000'>&darr;</font><br>";
     $retVal.="Группа № ".$_GET['nGroup']." (ПРАКТИЧЕСКОЕ / <a href='d.php?menuactiv=goG&idPrepod=".$_SESSION['SesVar']['FIO'][0]."&idPredmet=".$_GET['idPredmet']."&idF=".$_SESSION['SesVar']['Dekan'][2]."&idGroup=".$_GET['idGroup']."&PL=1&nPredmet=".$_GET['nPredmet']."&nF=".$_GET['nF']."&nGroup=".$_GET['nGroup']."&IdCaptain=".$_GET['IdCaptain']."'>Лекция</a>)</h3><hr>";
 
@@ -685,7 +759,7 @@ function Fakultet()
             }
         }
 
-        $retVal .= "<h3><a href='d.php'>$Pre</a><br>&nbsp;<font color='#ff0000'>&darr;</font><br>";
+        $retVal .= "<h3><a href='d.php?v=a'>$Pre</a><br>&nbsp;<font color='#ff0000'>&darr;</font><br>";
         $result = mssql_query("SELECT Name FROM dbo.Facultets WHERE IdF=".$_SESSION['SesVar']['Dekan'][2]."", $dbStud);
         if (mssql_num_rows($result) >= 1) {
             list($idName) = mssql_fetch_row($result);
@@ -730,7 +804,7 @@ function MainF(){
     $countPredmet=count($_SESSION['SesVar']['PredmetDekan']);
     $retVal.="
       <div class='DialogP'>
-      <div class='titleBox'><H2>Дисциплина</H2></div>
+      <div class='titleBox'><H2><a href='d.php'>По курсам</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;По дисциплинам</H2></div>
    ";
 
     include_once 'configStudent.php';
@@ -834,6 +908,57 @@ function HeaderFooter($content,$title,$vC='',$vS=''){
     </html>
     <?php
 }
+
+
+function HeaderFooterKurs($content,$title,$vC='',$vS=''){
+    ?>
+    <!doctype html>
+    <html>
+    <head>
+        <title><?php echo $title; ?></title>
+        <meta charset="windows-1251">
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="style.css<?php echo $vC; ?>">
+        <link rel="stylesheet" href="scripts/jquery-ui.css">
+        <script src="scripts/jquery-3.2.1.min.js"></script>
+        <script src="scripts/jquery-ui.js"></script>
+        <script src="scripts/jquery.datepicker.extension.range.min.js"></script>
+        <script src="scripts/kursInfo.js<?php echo $vS; ?>"></script>
+        <script src="scripts/online.js"></script>
+    </head>
+    <body>
+    <?
+    echo LevelView();
+    ?>
+    <div class="Header"><H2><?php echo $_SESSION['SesVar']['FIO'][1]; ?></H2></div>
+    <?php echo $content; ?>
+    <div style="clear:both;">&nbsp;</div>
+    <div class="support"><a href="help/index.html">Руководство пользователя "Эл. журнала"</a> <br> По техническим вопросам работы электронного журнала обращаться: 279-42-05 (вн. 506) </div>
+    <div style="clear:both; margin-bottom:100px;">&nbsp;</div>
+
+    <div id='diapasonRep' title='Заменить пропуски'>
+        <form>
+            <fieldset>
+              c <input id="from_date" readonly> по <input id="to_date" readonly><br><br>
+                <div class='panel'>
+                    <b  class='tool' title='Пропуск по уважительной причине'><b>Н<sub>у</sub></b></b><span class='space'></span>
+                    <b  class='tool' title='Пропуск без отработки занятия'><b>Н<sub>б.о</sub></b></b><span class='space'></span>
+                    <b  class='tool' title='Пропуск по неуважительной причине'><b>Н<sub>н</sub></b></b>
+                </div>
+                <br>
+                <input class='inp_cell' id='inp_0' type=text maxlength='0'>
+                <br>
+            </fieldset>
+        </form>
+    </div>
+
+    </body>
+    </html>
+    <?php
+}
+
 
 function HeaderFooterGroup($content,$title,$vC='',$vS=''){
     ?>
