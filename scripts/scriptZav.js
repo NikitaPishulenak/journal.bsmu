@@ -1,4 +1,4 @@
-﻿$(function () {
+$(function () {
     $("div.average").each(function () {
         var sum = 0, countGrade = 0;
         var elem = $(this).attr('data-idStudent');
@@ -455,7 +455,9 @@ $(function () {
                     alert("�_�_�_из�_�_�>а �_�_и�+ка п�_и п���_���_а�+�� �_а�_�_�<�:");
                 } else {
                     if (id_Zapis == 0) id_Zapis = myStudentZapis[id_Less + 'Zapis' + student_id];
-                    $.ajax({
+
+                    if(Encrypt(cur_grade)!=coding){
+                        $.ajax({
                         type: 'get',
                         url: 'z.php',
                         data: {
@@ -492,6 +494,8 @@ $(function () {
                         },
                         timeout: 30000
                     });
+                    }
+                    
                 }
             }
             $("button#edit").attr('disabled', true);

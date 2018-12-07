@@ -25,6 +25,19 @@ A:focus{outline:none; }
 .DialogGr:hover { background-color:#dedede; }
 .DialogGr div {position: relative; margin:0 auto;}
 .DialogGr div a {position: relative; margin:0 auto;}
+
+.DialogGrKurs {position: relative; float:left; margin:3px; height:25px; width:120px; padding:5px; border:1px solid #c0c0c0; -webkit-border-radius:4px; -moz-border-radius:4px; border-radius:4px; display:table; cursor:pointer; }
+.DialogGrKurs div {position: relative; margin:5px;}
+.DialogKurs {float:left; margin:10px; width:150px; min-height:61px; padding:8px; border:1px solid #c0c0c0; background-color:#ECECEC; -webkit-border-radius:8px; -moz-border-radius:8px; border-radius:8px; color:#004c99; font-size:14px; cursor:pointer;}
+.DialogKurs P {margin:6px; line-height:12px}
+.DialogKurs A { font-size:12px;line-height:16px; display:block;}
+.DialogGrKurs .CV, .DialogKurs .CV {position:absolute; color:#fff; text-align: center; background-color:#717171; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
+.DialogGrKurs .CVD, .DialogKurs .CVD {position:absolute; color:#fff; text-align: center; background-color:#1e1e1e; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
+.DialogGrKurs .CVC, .DialogKurs .CVC {position:absolute; color:#fff; text-align: center; background-color:#c10000; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
+.DialogKurs strong .DialogKursName {border-bottom:dashed #fe7d7d 1px;}
+.DialogKurs .DialogKursDiapason {position:absolute; display:table; top:-3px; right:-7px; }
+
+
 .HRnext {clear:both; margin-bottom: 25px;}
 
 
@@ -35,7 +48,7 @@ A:focus{outline:none; }
 .DialogFakFak .COD, .DialogFakFak .CODOpen {position:absolute; color:#fff; text-align: center; background-color:#1e1e1e; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
 .DialogFakFak .COC, .DialogFakFak .COCOpen {position:absolute; color:#fff; text-align: center; background-color:#c10000; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
 
-.DialogFakFak .fullTextClose { float:right; display:none; color:#fff; text-align: center; background-color:#c10000;}
+.DialogFakFak .fullTextClose, .fullTextClose { float:right; display:none; color:#fff; text-align: center; background-color:#c10000;}
 .DialogFakFak .fullText{margin-top: 20px;}
 
 .Not { color:#000; font-size:18px; }
@@ -62,7 +75,6 @@ A:focus{outline:none; }
 .gLog {font-weight:bold; font-size:15px; }
 .fLog {font-style:italic;}
 .DialogGr .Inostr {position:absolute; color:#fff; text-align: center; background-color:#909090; right:0; top:0; width:15px; height:15px; font-size:9px; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;}
-.support {margin-top:50px; margin-left:20px; font-size:12px; color:#808080;}
 
 
 .SearchForm {margin-top:20px; margin-bottom:20px; font-size:12px; font-style:italic;}
@@ -144,9 +156,8 @@ b#delGr{ font-size: 1.5em;}
 input#number_theme, input#edit_number_theme{ width: 30px;}
 div.number_theme{ padding-left: 5px; position: absolute; top: 15px; margin-left: 140px;}
 
-.export{ margin-top:30px; margin-left:10px; display:table;}
-.export img { border:0; vertical-align: middle; margin-right:10px;}
 .sh{ box-shadow: inset 0 0 10px 5px rgba(0,0,0,0.2); transition: 1.0s;}
+#form-comment textarea{width: 99%; height: 66vh; resize: none;}
 
 /*Деканат*/
 .available_grade {opacity: 1; cursor: pointer;}
@@ -157,11 +168,26 @@ div.number_theme{ padding-left: 5px; position: absolute; top: 15px; margin-left:
 .sel_tool:hover, .replaceAbs:hover{border-bottom:0;}
 .genPayText{ color: #A9A9A9;}
 .sucPayText{ color: #006400; }
-div.check_pay{display:inline-flex; margin-left: 8px; cursor:pointer;}
-input:disabled { background:#ddd;}
-input:disabled+label{color:#ccc;} 
-input+label{-moz-user-select: none; -o-user-select:none; -khtml-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none;}
+.coin{ position: absolute; top: -5px; right: -5px; }
+input#from_date, input#to_date{ width: 80px;}
 
+.BotLeft {float:left; width:40%; margin-top:30px;}
+.BotRight { float:left; width:50%; padding-left:60px; margin-top:30px; }
+.commentText {margin-top:15px; font-family:'Times New Roman'; font-style:italic; }
+#comment {cursor:pointer; text-decoration:underline; color:#004c99; }
+#comment:hover {color:#00264c; text-decoration:none;}
+.support {margin-top:50px; font-size:12px; color:#808080; position: relative;}
+.export {display:table;}
+.export img { border:0; vertical-align: middle; margin-right:10px;}
+.upd{background-color: #be0b0b; color: #fff; border-radius: 3px; position: absolute; top: 0; right: 0;}
+
+
+
+/* �� ������ ---------------------------------*/
+.Kurs { padding-left:20px; padding-top:10px; padding-bottom:20px; }
+.KursCount { float:left; padding:10px; margin-right:10px; border:1px #c0c0c0 solid; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;}
+.KursCount:hover { background-color:#e7e7e7; }
+.Curr {background-color:#c0c0c0; font-weight:bold;}
 
 
 /* Авторизация ------------------------------------------------------------------------------------------*/
@@ -178,6 +204,12 @@ input+label{-moz-user-select: none; -o-user-select:none; -khtml-user-select: non
     .DialogFakFak .CO {right:17px; top:-7px; width:22px; height:16px; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
     .DialogFakFak .COD {right:-7px; top:-7px; width:22px; height:16px; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
     .DialogFakFak .COC {right:41px; top:-7px; width:22px; height:16px; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
+    .DialogGrKurs .CV {right:10px; top:2px; width:22px; height:14px; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
+    .DialogGrKurs .CVD {right:26px; top:2px; width:22px; height:14px; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
+    .DialogGrKurs .CVC {right:34px; top:2px; width:22px; height:14px; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
+    .DialogKurs .CV {right:17px; top:-13px; width:22px; height:14px; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
+    .DialogKurs .CVD {right:-7px; top:-13px; width:22px; height:14px; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
+    .DialogKurs .CVC {right:41px; top:-13px; width:22px; height:14px; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
     .DialogFakFak .COOpen {left:17px; top:-11px; width:22px; height:16px;}
     .DialogFakFak .CODOpen {left:-8px; top:-11px; width:22px; height:16px;}
     .DialogFakFak .COCOpen {left:41px; top:-11px; width:22px; height:16px;}
@@ -188,15 +220,24 @@ input+label{-moz-user-select: none; -o-user-select:none; -khtml-user-select: non
     .Oc .Otmetka {padding:8px; font-size:17px;}
     .Koll .Otmetka {font-size:17px;}
     .Exm .Otmetka {font-size:17px;}
-    .DialogFakFak .fullTextClose {width:22px; height:16px; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
+    .DialogFakFak .fullTextClose, .fullTextClose {width:22px; height:16px; padding-top:3px; font-size:9px; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;}
     H2 {font-size:15px;}
 
 }
 
 @media only screen and (min-width: 10px) and (max-width: 699px) {
+    .BotLeft {float:none; width:90%; margin-top:30px;}
+    .BotRight { float:left; width:90%; margin-top:30px; padding-left:0; }
     .DialogFakFak {margin:7px; width:160px; padding:7px; -webkit-border-radius:8px; -moz-border-radius:8px; border-radius:8px; font-size:13px;}
     .DialogFakFak .fullText {font-size:13px; line-height:0;}
     .DialogFakFak .shortText{font-size:13px;  line-height:0;}
+
+    .DialogGrKurs .CV, .DialogGrKurs .CVD, .DialogGrKurs .CVC, .DialogKurs .CV, .DialogKurs .CVD, .DialogKurs .CVC{top:-5px; width:14px; padding-top:0; height:12px; font-size:8px; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;}
+    .DialogGrKurs .CV, .DialogKurs .CV {right:10px;}
+    .DialogGrKurs .CVD, .DialogKurs .CVD {right:-6px;}
+    .DialogGrKurs .CVC, .DialogKurs .CVC {right:26px;}
+    .DialogKurs .DialogKursDiapason {top:-10px; right:-10px; }
+
     .DialogFakFak .CO, .DialogFakFak .COD, .DialogFakFak .COOpen, .DialogFakFak .CODOpen, .DialogFakFak .COC, .DialogFakFak .COCOpen{top:-5px; width:14px; padding-top:0; height:12px; font-size:8px; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;}
     .DialogFakFak .CO {right:10px;}
     .DialogFakFak .COD {right:-6px;}
@@ -212,7 +253,7 @@ input+label{-moz-user-select: none; -o-user-select:none; -khtml-user-select: non
     .Oc .Otmetka { padding:5px; font-size:11px;}
     .Koll .Otmetka {font-size:11px;}
     .Exm .Otmetka {font-size:11px;}
-    .DialogFakFak .fullTextClose {width:16px; height:13px; padding-top:2px; font-size:8px; -webkit-border-radius:4px; -moz-border-radius:4px; border-radius:4px;}
+    .DialogFakFak .fullTextClose, .fullTextClose {width:16px; height:13px; padding-top:2px; font-size:8px; -webkit-border-radius:4px; -moz-border-radius:4px; border-radius:4px;}
     H2 {font-size:14px;}
     p {font-size: 14px;}
     .SearchWords {width:70%;}
@@ -234,7 +275,7 @@ input+label{-moz-user-select: none; -o-user-select:none; -khtml-user-select: non
     .Oc .Otmetka { padding:4px; font-size:10px;}
     .Koll .Otmetka {font-size:10px;}
     .Exm .Otmetka {font-size:10px;}
-    .DialogFakFak .fullTextClose {width:16px; height:13px; padding-top:2px; font-size:8px; -webkit-border-radius:4px; -moz-border-
+    .DialogFakFak .fullTextClose, .fullTextClose {width:16px; height:13px; padding-top:2px; font-size:8px; -webkit-border-radius:4px; -moz-border-
 
 radius:4px; border-radius:4px;}
     H2 {font-size:13px;}

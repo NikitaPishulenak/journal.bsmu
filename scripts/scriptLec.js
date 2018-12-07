@@ -1,4 +1,4 @@
-﻿$(function () {
+$(function () {
     var dialog, form, edit_dialog, edit_form;
     var myStudentId = new Array();
     var myStudentZapis = new Array();
@@ -236,8 +236,9 @@
                 }
                 else{
                     if(id_Zapis == 0) id_Zapis = myStudentZapis[id_Less+'Zapis'+student_id];
-                    console.log(Encrypt(cur_grade));
-                    $.ajax({
+                    
+                    if(Encrypt(cur_grade)!=coding){
+                        $.ajax({
                         type:'get',
                         url:'p.php',
                         data:{
@@ -276,6 +277,8 @@
                         },
                         timeout:30000
                     });
+                    }
+                    
                 }
 
             }

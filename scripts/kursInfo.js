@@ -1,5 +1,10 @@
 $(document).ready(function() {
     var clickToIdGroup=$("#idGrgr").val();
+    var objLastGroup="";
+    var idGroup="";
+    var nGroup="";
+    var idCaptain="";
+    var idStudent=0;
     
     
     var subjDivWidth = $("div.DialogGrKurs").css('width');
@@ -34,11 +39,13 @@ $(document).ready(function() {
     
 
     $("div.DialogGrKurs").click(function() {
+        objLastGroup=$(this).find(".content_grade");
+        // getStudentList(objLastGroup);
 
-        var idGroup=$(this).attr('data-idGroup');
-        var nGroup=$(this).attr('data-nGroup');
-        var idCaptain=$(this).attr('data-IdCaptain');
-        var idStudent=0;
+        idGroup=$(this).attr('data-idGroup');
+        nGroup=$(this).attr('data-nGroup');
+        idCaptain=$(this).attr('data-IdCaptain');
+        idStudent=0;
 
 
         var obj_this_contentGrade = $(this).find(".content_grade");
@@ -53,26 +60,7 @@ $(document).ready(function() {
             $(this).animate({ width: "95%" }, 400, function() {
                 obj_this_contentGrade.show();
                 
-                $.ajax({
-                    type: 'get',
-                    url: 'd.php',
-                    data: {
-                        'menuactiv': "editGroupInfo",
-                        'idGroup': idGroup,
-                        'nGroup': nGroup,
-                        'idCaptain': idCaptain,
-                        'ajaxTrue':"1"
-                    },
-                    beforeSend:function () {
-                        obj_this_contentGrade.html("Загрузка...");
-                    },
-                    success: function (response) {
-                        obj_this_contentGrade.html(response);
-                     },
-                    error: function () {
-                        alert("Произошла ошибка при передаче данных!");
-                    }
-                });
+                getStudentList(idGroup, nGroup, idCaptain, obj_this_contentGrade);
                 
                 $(this).find(".fullTextClose").css('display', 'block');
                 $('div').delegate(".fullTextClose", "click", function(event) {
@@ -123,35 +111,43 @@ $(document).ready(function() {
         var to_date=$("#to_date").val();
         var repGrade=$("#inp_0").val();
         var codingRepGrade=Encrypt($("#inp_0").val());
-        checkField(repGrade, from_date, to_date);
-        // console.log(checkField(repGrade, from_date, to_date));
-        // if(checkField(repGrade, from_date, to_date)){
-        //     $.ajax({
-        //             type: 'get',
-        //             url: 'd.php',
-        //             data: {
-        //                 'menuactiv': "editGroupReplace",
-        //                 'idStudent': idStudent,
-        //                 'fromDate': from_date,
-        //                 'toDate': to_date,
-        //                 'repGrade': codingRepGrade,
-        //                 'ajaxTrue':"1"
-        //             },
-        //             success: function (response) {
-        //                 alert("Модуль работает в тестовом режиме!");
-        //              },
-        //             error: function () {
-        //                 alert("Произошла ошибка при передаче данных!");
-        //             }
-        //         });
-        //     dialogRep.dialog("close");
-        // }
+
+        if(checkField(repGrade, from_date, to_date)){
+            $.ajax({
+                    type: 'get',
+                    url: 'd.php',
+                    data: {
+                        'menuactiv': "editGroupReplace",
+                        'idStudent': idStudent,
+                        'fromDate': from_date,
+                        'toDate': to_date,
+                        'repGrade': codingRepGrade,
+                        'ajaxTrue':"1"
+                    },
+                    success: function (response) {
+
+                        if (response != "No") {
+                            alert("Изменения успешно сохранены.");
+                            getStudentList(idGroup, nGroup, idCaptain, objLastGroup);
+                        }
+                        else {
+                            alert("Произошел сбой при попытке заменить пропуски.");
+                        }
+                    },
+                    error: function () {
+                        alert("Произошла ошибка при передаче данных!");
+                    }
+                });
+            dialogRep.dialog("close");
+        }
     }
 
     function checkField(repGrade, from_date, to_date){
-        var firstDat = datat.val().split('.');
-        var secondDat = datad.val().split('.');
-        console.log(firstDat);
+        var firstD = from_date.split('.');
+        var secondD = to_date.split('.');
+        var firstDate = new Date (firstD[2], (firstD[1]-1), firstD[0]);
+        var secondDate = new Date (secondD[2], (secondD[1] - 1 ), secondD[0]);
+
         if(repGrade==""){
             alert("Вы не выбрали на что необходимо заменить!");
             return false;
@@ -160,13 +156,36 @@ $(document).ready(function() {
      //     alert("Все поля формы должны быть заполнены");
      //     return false;
      //    }
-        else if(Date.parse(from_date) > Date.parse(to_date)){
-            alert("Дата начала не может быть позже даты конца!");
+        else if(firstDate > secondDate){
+            alert("Начальная дата не может быть позже конечной даты!");
             return false;
         }
         
         return true;
 
+    }
+
+    function getStudentList(idGroup, nGroup, idCaptain, obj){
+        $.ajax({
+            type: 'get',
+            url: 'd.php',
+            data: {
+                'menuactiv': "editGroupInfo",
+                'idGroup': idGroup,
+                'nGroup': nGroup,
+                'idCaptain': idCaptain,
+                'ajaxTrue':"1"
+            },
+            beforeSend:function () {
+                obj.html("Загрузка...");
+            },
+            success: function (response) {
+                obj.html(response);
+            },
+            error: function () {
+                alert("Произошла ошибка при передаче данных!");
+            }
+        });
     }
 
  });

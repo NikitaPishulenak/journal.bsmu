@@ -6,6 +6,7 @@
     var countStudents = $("div.fio_student").length;
     (countStudents==0) ? $("div.export").hide() : "";
     ($("div.grade").length<2) ? $("div.statistic").hide() : "";
+    $("#form-comment").hide();
 
     //Дорисовка точек
     $("div.grade").each(function () {
@@ -140,7 +141,7 @@
     });
 
     $("div.SumStat").click(function(){
-        pathURL=location.pathname.slice(1);
+        var pathURL=location.pathname.slice(1);
         var winH=document.documentElement.clientHeight*0.8;
 
         var show_dialog, show_form;
@@ -220,6 +221,92 @@
         });
     });
     
+
+    $("#comment").click(function(){
+        var pathURL=location.pathname.slice(1);
+        var winH=document.documentElement.clientHeight*0.8;
+
+        var comment_dialog, comment_form;
+        //Окно просмотра
+        comment_dialog = $("#form-comment").dialog({
+            resizable: false,
+            autoOpen: false,
+            height: winH,
+            width: '90%',
+            modal: true
+        });
+        comment_form = comment_dialog.find("form").on("submit", function (event) {
+            event.preventDefault();
+        });
+        
+        var groupNumber=$("#nGroup").val();
+        console.log(pathURL+"-"+groupNumber);
+
+        comment_dialog.dialog("open");
+        comment_dialog.dialog({title: "Гр. № "+groupNumber});
+
+
+
+        // $.ajax({
+        //     type: 'get',
+        //     url: pathURL,
+        //     data: {
+        //         'idStudent': $(this).parent().attr("data-idStudent"),
+        //         'nGroup': $("input#nGroup").val(),
+        //         'idSubject': $("input#idSubject").val(),
+        //         'idPL': $("input#idPL").val(),
+        //         'menuactiv': "OldPizdabol",
+        //         'ajaxTrue': "1"
+        //     },
+        //     beforeSend:function () {
+        //         $("div#content").html("Загрузка..."); 
+        //     },
+        //     success: function (response) {
+        //         if ((response != "No") && (response != "Access is denied!") && (response != "No access rights!")) {
+        //             show_dialog.dialog("open"); 
+        //             $("#sub").html($("input#nSubject").val());
+        //             $("#fio").html(fio);
+        //             $("div#content").html(response); 
+
+        //             $('div.Otmetka').each(function(){
+        //                 $(this).html(Decrypt($(this).text()));
+        //                 $(this).parent().css("opacity", "1");
+        //                 var isNn=$(this).attr('data-Nn');
+        //                 if (isNn==1){
+        //                     $(this).append('<div class="bullDec"><img src="img/bull.png"></div>');
+        //                 } 
+        //             }); 
+                    
+        //             $("body").click(function(e){
+        //                 var block=$("#form-show");
+        //                 if (!block.is(e.target) && block.has(e.target).length === 0){
+        //                     show_dialog.dialog("close"); 
+        //                 }
+        //             });  
+
+        //             $('.ui-dialog-titlebar').click(function(e){e.stopPropagation();});         
+        //         }
+        //         else {
+        //             if (st == "No") {
+        //                 alert("Произошел сбой при получении данных!");
+        //             }
+        //             else if (st == "Access is denied!") {
+        //                 alert("Извините, время вашей рабочей сессии истекло. Пожалуйста, закройте браузер и заново авторизуйтесь.");
+        //             }
+        //             else if (st == "No access rights!") {
+        //                 alert("Не достаточно прав!");
+        //             }
+        //             else {
+        //                 alert("Что-то пошло не так! ");
+        //             }
+        //         }        
+        //     },
+        //     error: function () {
+        //         //show_dialog.dialog("open");
+        //         alert("Не удалось получить историю учебы в прежней группе!");
+        //     }
+        // });
+    });
 });
 
 $(window).resize(function () {

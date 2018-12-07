@@ -7,7 +7,7 @@ if(!isset($_SESSION['SesVar']['Auth']) || $_SESSION['SesVar']['Auth']!==true){
     echo "Access is denied!";
     exit;
    } else {
-      header('Location: index.php?closet=Время сессии истекло!');
+      header('Location: index.php?closet=Р’СЂРµРјСЏ СЃРµСЃСЃРёРё РёСЃС‚РµРєР»Рѕ!');
       exit;
    }
 }
@@ -19,7 +19,7 @@ for ($ii = 0; $ii <= ($countLev - 1); $ii++) {
 }
 
 if (!$Nepuschu) {
-    header('Location: index.php?closet=Запрещённый уровень доступа! Досвидос.');
+    header('Location: index.php?closet=Р—Р°РїСЂРµС‰С‘РЅРЅС‹Р№ СѓСЂРѕРІРµРЅСЊ РґРѕСЃС‚СѓРїР°! Р”РѕСЃРІРёРґРѕСЃ.');
     exit;
 }
 
@@ -80,10 +80,10 @@ function ViewOldLesson(){
       while($arrSS = mysqli_fetch_row($resultS)){
          switch($arrSS[2]){
             case 1:
-               $retVal.="<div class='Oc Koll' title='Коллоквиум / История болезни'><div class='DataO'>".($arrSS[5] ? "<div class='nLessonOld'>".$arrSS[5]."</div>" : "").$arrSS[0]."</div><div class='Otmetka' data-Nn=".$arrSS[4].">".$arrSS[1]."</div></div>\n";   
+               $retVal.="<div class='Oc Koll' title='РљРѕР»Р»РѕРєРІРёСѓРј / РСЃС‚РѕСЂРёСЏ Р±РѕР»РµР·РЅРё'><div class='DataO'>".($arrSS[5] ? "<div class='nLessonOld'>".$arrSS[5]."</div>" : "").$arrSS[0]."</div><div class='Otmetka' data-Nn=".$arrSS[4].">".$arrSS[1]."</div></div>\n";   
                break;
             case 2:
-               $retVal.="<div class='Oc Exm' title='Аттестация'><div class='DataO'>".($arrSS[5] ? "<div class='nLessonOld'>".$arrSS[5]."</div>" : "").$arrSS[0]."</div><div class='Otmetka' data-Nn=".$arrSS[4].">".$arrSS[1]."</div></div>\n";
+               $retVal.="<div class='Oc Exm' title='РђС‚С‚РµСЃС‚Р°С†РёСЏ'><div class='DataO'>".($arrSS[5] ? "<div class='nLessonOld'>".$arrSS[5]."</div>" : "").$arrSS[0]."</div><div class='Otmetka' data-Nn=".$arrSS[4].">".$arrSS[1]."</div></div>\n";
                break;
             default:
                $retVal.="<div class='Oc'><div class='DataO'>".($arrSS[5] ? "<div class='nLessonOld'>".$arrSS[5]."</div>" : "").$arrSS[0]."</div><div class='Otmetka' data-Nn=".$arrSS[4].">".$arrSS[1]."</div></div>\n";
@@ -95,7 +95,7 @@ function ViewOldLesson(){
       echo $retVal;
       unset($retVal);
    } else {
-      echo "<div class='Not'>По данной дисциплине отметок нет!</div>";
+      echo "<div class='Not'>РџРѕ РґР°РЅРЅРѕР№ РґРёСЃС†РёРїР»РёРЅРµ РѕС‚РјРµС‚РѕРє РЅРµС‚!</div>";
    }
 }
 
@@ -118,21 +118,21 @@ function edtLessonStudent()
 {
     include_once 'configMain.php';
     if(is_numeric($_GET['id_Zapis']) && is_numeric($_GET['idStudent']) && is_numeric($_GET['grades']) && is_numeric($_GET['oldGrades']) && is_numeric($_SESSION['SesVar']['FIO'][0])){
-        if(isset($_GET['nGroup']) && $_GET['nGroup']){ $nGr=trim(substr($_GET['nGroup'],0,6)); } else { $nGr=""; }
-        $resTime = mysqli_query($dbMain, "SELECT TIMESTAMPDIFF(MINUTE, CONCAT(DateO, ' ', TimeO), NOW()), idLessons, idLesson, DateO, TimeO, RatingO, idEmployess, levEmployess FROM rating WHERE del=0 AND id=".$_GET['id_Zapis']." AND idStud=".$_GET['idStudent']);
+//        if(isset($_GET['nGroup']) && $_GET['nGroup']){ $nGr=trim(substr($_GET['nGroup'],0,6)); } else { $nGr=""; }
+        $resTime = mysqli_query($dbMain, "SELECT TIMESTAMPDIFF(MINUTE, CONCAT(DateO, ' ', TimeO), NOW()), idLessons, idLesson, DateO, TimeO, RatingO, idEmployess, levEmployess, nGroup FROM rating WHERE del=0 AND id=".$_GET['id_Zapis']." AND idStud=".$_GET['idStudent']);
         if (mysqli_num_rows($resTime) >= 1) {
             $arr = mysqli_fetch_row($resTime);
             $Nn = 0;
             $ar=str_split($_GET['oldGrades'], 2); $arcount = count($ar);
             for($iS=0; $iS<=($arcount-1); $iS++){ if($ar[$iS]!=20 && $ar[$iS]!=21 && $ar[$iS]!=22){ $strI['n'.$ar[$iS]]++; } else { $Nn = 1; } }
             while(list($key,$val) = each($strI)){ $strUpdate.=",".$key."=".$key."-".$val; } 
-            mysqli_query($dbMain, "INSERT INTO aerostat (idStud,idLessons,idFak,nGroup) VALUES (".$_GET['idStudent'].",".$_GET['idLessons'].",".$_GET['idF'].",'".$nGr."') ON DUPLICATE KEY UPDATE idStud=".$_GET['idStudent'].",idLessons=".$_GET['idLessons'].",idFak=".$_GET['idF'].",nGroup='".$nGr."'".$strUpdate);
+            mysqli_query($dbMain, "INSERT INTO aerostat (idStud,idLessons,idFak,nGroup) VALUES (".$_GET['idStudent'].",".$_GET['idLessons'].",".$_GET['idF'].",'".$arr[8]."') ON DUPLICATE KEY UPDATE idStud=".$_GET['idStudent'].",idLessons=".$_GET['idLessons'].",idFak=".$_GET['idF'].",nGroup='".$arr[8]."'".$strUpdate);
 
             $ar=str_split($_GET['grades'], 2); $arcount = count($ar);
             for($iS=0; $iS<=($arcount-1); $iS++){ if($ar[$iS]!=20 && $ar[$iS]!=21 && $ar[$iS]!=22){ $strU['n'.$ar[$iS]]++; } else { $Nn = 0; } }
             $firstLine = 0;
             while(list($key,$val) = each($strU)){ if(!$firstLine){ $strUpdate=$key."=".$key."+".$val; $firstLine=1; } else { $strUpdate.=",".$key."=".$key."+".$val; } } 
-            mysqli_query($dbMain, "UPDATE aerostat SET ".$strUpdate." WHERE idStud=".$_GET['idStudent']." AND idLessons=".$_GET['idLessons']." AND idFak=".$_GET['idF']." AND nGroup='".$nGr."'");
+            mysqli_query($dbMain, "UPDATE aerostat SET ".$strUpdate." WHERE idStud=".$_GET['idStudent']." AND idLessons=".$_GET['idLessons']." AND idFak=".$_GET['idF']." AND nGroup='".$arr[8]."'");
 
             if($arr[6]!=$_SESSION['SesVar']['FIO'][0] || $arr[0] > 10 || $arr[7]!=3){
                 mysqli_query($dbMain, "INSERT INTO logi (idRating,idLessons,idLesson,idStud,DateO,TimeO,RatingO,idEmployess) VALUES (".$_GET['id_Zapis'].",".$arr[1].",".$arr[2].",".$_GET['idStudent'].",'".$arr[3]."','".$arr[4]."',".$arr[5].",".$arr[6].")");
@@ -206,7 +206,7 @@ function GroupViewL()
 
     $retVal .= "<h3><a href='p.php'>" . $_GET['nPredmet'] . "</a><br>&nbsp;<font color='#ff0000'>&darr;</font><br>";
     $retVal .= "<a href='p.php?menuactiv=goF&idPrepod=".$_SESSION['SesVar']['FIO'][0]."&idKaf=".$_SESSION['SesVar']['Prepod'][2]."&idPredmet=".$_GET['idPredmet']."&idF=".$_GET['idF']."'>".$_GET['nF']."</a><br>&nbsp;<font color='#ff0000'>&darr;</font><br>";
-    $retVal .= "Группа № ".$_GET['nGroup']." (<a href='p.php?menuactiv=goG&idPrepod=".$_SESSION['SesVar']['FIO'][0]."&idKaf=".$_SESSION['SesVar']['Prepod'][2]."&idPredmet=".$_GET['idPredmet']."&idF=".$_GET['idF']."&idGroup=".$_GET['idGroup']."&PL=0&nPredmet=".$_GET['nPredmet']."&nF=".$_GET['nF']."&nGroup=".$_GET['nGroup']."&IdCaptain=".$_GET['IdCaptain']."'>Практическое</a> / ЛЕКЦИЯ)</h3><hr>";
+    $retVal .= "Р“СЂСѓРїРїР° в„– ".$_GET['nGroup']." (<a href='p.php?menuactiv=goG&idPrepod=".$_SESSION['SesVar']['FIO'][0]."&idKaf=".$_SESSION['SesVar']['Prepod'][2]."&idPredmet=".$_GET['idPredmet']."&idF=".$_GET['idF']."&idGroup=".$_GET['idGroup']."&PL=0&nPredmet=".$_GET['nPredmet']."&nF=".$_GET['nF']."&nGroup=".$_GET['nGroup']."&IdCaptain=".$_GET['IdCaptain']."'>РџСЂР°РєС‚РёС‡РµСЃРєРѕРµ</a> / Р›Р•РљР¦РРЇ)</h3><hr>";
 
 
     $retVal .= "
@@ -232,9 +232,9 @@ function GroupViewL()
                 $resultStat = mysqli_query($dbMain, "SELECT SUM(n26) FROM aerostat WHERE idLessons=".$_GET['idPredmet']." AND idStud=".$arrS[0]." AND nGroup<>'".$_GET['nGroup']."' GROUP BY idStud");
                 if (mysqli_num_rows($resultStat) >= 1) { List($SumStat) = mysqli_fetch_row($resultStat); } else { $SumStat=0; }
                 if($arrS[0] == $_GET['IdCaptain']){
-                  $preStud .= "<div class='fio_student' data-idStudent='".$arrS[0]."' title='Капитан шлюпки'>".($i + 1).". <strong>".$arrS[1]."</strong>".($SumStat ? "<div class='SumStat' title='Отметки в других группах по текущей дисциплине'>".$SumStat."</div>" : "")."</div>\n";
+                  $preStud .= "<div class='fio_student' data-idStudent='".$arrS[0]."' title='РљР°РїРёС‚Р°РЅ С€Р»СЋРїРєРё'>".($i + 1).". <strong>".$arrS[1]."</strong>".($SumStat ? "<div class='SumStat' title='РћС‚РјРµС‚РєРё РІ РґСЂСѓРіРёС… РіСЂСѓРїРїР°С… РїРѕ С‚РµРєСѓС‰РµР№ РґРёСЃС†РёРїР»РёРЅРµ'>".$SumStat."</div>" : "")."</div>\n";
                 } else {
-                  $preStud .= "<div class='fio_student' data-idStudent='".$arrS[0]."'>".($i + 1).". ".$arrS[1].($SumStat ? "<div class='SumStat' title='Отметки в других группах по текущей дисциплине'>".$SumStat."</div>" : "")."</div>\n";
+                  $preStud .= "<div class='fio_student' data-idStudent='".$arrS[0]."'>".($i + 1).". ".$arrS[1].($SumStat ? "<div class='SumStat' title='РћС‚РјРµС‚РєРё РІ РґСЂСѓРіРёС… РіСЂСѓРїРїР°С… РїРѕ С‚РµРєСѓС‰РµР№ РґРёСЃС†РёРїР»РёРЅРµ'>".$SumStat."</div>" : "")."</div>\n";
                 }
 
                 $arrStud[$i] = $arrS[0];
@@ -302,9 +302,9 @@ function GroupViewL()
                 $resultStat = mysqli_query($dbMain, "SELECT SUM(n26) FROM aerostat WHERE idLessons=".$_GET['idPredmet']." AND idStud=".$arrStud[0]." AND nGroup<>'".$_GET['nGroup']."' GROUP BY idStud");
                 if (mysqli_num_rows($resultStat) >= 1) { List($SumStat) = mysqli_fetch_row($resultStat); } else { $SumStat=0; }
                 if($arrStud[0] == $_GET['IdCaptain']){
-                  $preStud .= "<div class='fio_student' data-idStudent='".$arrStud[0]."' title='Капитан шлюпки'>".$i.". <strong>".$arrStud[1]."</strong>".($SumStat ? "<div class='SumStat' title='Отметки в других группах по текущей дисциплине'>".$SumStat."</div>" : "")."</div>\n";
+                  $preStud .= "<div class='fio_student' data-idStudent='".$arrStud[0]."' title='РљР°РїРёС‚Р°РЅ С€Р»СЋРїРєРё'>".$i.". <strong>".$arrStud[1]."</strong>".($SumStat ? "<div class='SumStat' title='РћС‚РјРµС‚РєРё РІ РґСЂСѓРіРёС… РіСЂСѓРїРїР°С… РїРѕ С‚РµРєСѓС‰РµР№ РґРёСЃС†РёРїР»РёРЅРµ'>".$SumStat."</div>" : "")."</div>\n";
                 } else {
-                  $preStud .= "<div class='fio_student' data-idStudent='".$arrStud[0]."'>".$i.". ".$arrStud[1].($SumStat ? "<div class='SumStat' title='Отметки в других группах по текущей дисциплине'>".$SumStat."</div>" : "")."</div>\n";
+                  $preStud .= "<div class='fio_student' data-idStudent='".$arrStud[0]."'>".$i.". ".$arrStud[1].($SumStat ? "<div class='SumStat' title='РћС‚РјРµС‚РєРё РІ РґСЂСѓРіРёС… РіСЂСѓРїРїР°С… РїРѕ С‚РµРєСѓС‰РµР№ РґРёСЃС†РёРїР»РёРЅРµ'>".$SumStat."</div>" : "")."</div>\n";
                 }
 
                 $i++;
@@ -317,7 +317,7 @@ function GroupViewL()
     mysqli_free_result($resultL);
 
 
-    echo HeaderFooterGroupL($retVal, "№ " . $_GET['nGroup'], $verC, $verS);
+    echo HeaderFooterGroupL($retVal, "в„– " . $_GET['nGroup'], $verC, $verS);
 }
 
 
@@ -334,7 +334,7 @@ function GroupViewP()
 
     $retVal .= "<h3><a href='p.php'>".$_GET['nPredmet']."</a><br>&nbsp;<font color='#ff0000'>&darr;</font><br>";
     $retVal .= "<a href='p.php?menuactiv=goF&idPrepod=".$_SESSION['SesVar']['FIO'][0]."&idKaf=".$_SESSION['SesVar']['Prepod'][2]."&idPredmet=".$_GET['idPredmet']."&idF=".$_GET['idF']."'>".$_GET['nF']."</a><br>&nbsp;<font color='#ff0000'>&darr;</font><br>";
-    $retVal .= "Группа № ".$_GET['nGroup']." (ПРАКТИЧЕСКОЕ / <a href='p.php?menuactiv=goG&idPrepod=".$_SESSION['SesVar']['FIO'][0]."&idKaf=".$_SESSION['SesVar']['Prepod'][2]."&idPredmet=".$_GET['idPredmet']."&idF=".$_GET['idF']."&idGroup=".$_GET['idGroup']."&PL=1&nPredmet=".$_GET['nPredmet']."&nF=".$_GET['nF']."&nGroup=".$_GET['nGroup']."&IdCaptain=".$_GET['IdCaptain']."'>Лекция</a>)</h3><hr>";
+    $retVal .= "Р“СЂСѓРїРїР° в„– ".$_GET['nGroup']." (РџР РђРљРўРР§Р•РЎРљРћР• / <a href='p.php?menuactiv=goG&idPrepod=".$_SESSION['SesVar']['FIO'][0]."&idKaf=".$_SESSION['SesVar']['Prepod'][2]."&idPredmet=".$_GET['idPredmet']."&idF=".$_GET['idF']."&idGroup=".$_GET['idGroup']."&PL=1&nPredmet=".$_GET['nPredmet']."&nF=".$_GET['nF']."&nGroup=".$_GET['nGroup']."&IdCaptain=".$_GET['IdCaptain']."'>Р›РµРєС†РёСЏ</a>)</h3><hr>";
 
 
     $retVal .= "
@@ -360,9 +360,9 @@ function GroupViewP()
                 $resultStat = mysqli_query($dbMain, "SELECT SUM(n10+n11+n12+n13+n14+n15+n16+n17+n18+n19+n23+n24+n25+n28+n31+n32+n33+n34+n35+n36+n37+n40+n41+n42+n43+n44+n45) FROM aerostat WHERE idLessons=".$_GET['idPredmet']." AND idStud=".$arrS[0]." AND nGroup<>'".$_GET['nGroup']."' GROUP BY idStud");
                 if (mysqli_num_rows($resultStat) >= 1) { List($SumStat) = mysqli_fetch_row($resultStat); } else { $SumStat=0; }
                 if($arrS[0] == $_GET['IdCaptain']){
-                  $preStud .= "<div class='fio_student' data-idStudent='".$arrS[0]."' title='Капитан шлюпки'>".($i + 1).". <strong>".$arrS[1]."</strong>".($SumStat ? "<div class='SumStat' title='Отметки в других группах по текущей дисциплине'>".$SumStat."</div>" : "")."</div>\n";
+                  $preStud .= "<div class='fio_student' data-idStudent='".$arrS[0]."' title='РљР°РїРёС‚Р°РЅ С€Р»СЋРїРєРё'>".($i + 1).". <strong>".$arrS[1]."</strong>".($SumStat ? "<div class='SumStat' title='РћС‚РјРµС‚РєРё РІ РґСЂСѓРіРёС… РіСЂСѓРїРїР°С… РїРѕ С‚РµРєСѓС‰РµР№ РґРёСЃС†РёРїР»РёРЅРµ'>".$SumStat."</div>" : "")."</div>\n";
                 } else {
-                  $preStud .= "<div class='fio_student' data-idStudent='".$arrS[0]."'>".($i + 1).". ".$arrS[1].($SumStat ? "<div class='SumStat' title='Отметки в других группах по текущей дисциплине'>".$SumStat."</div>" : "")."</div>\n";
+                  $preStud .= "<div class='fio_student' data-idStudent='".$arrS[0]."'>".($i + 1).". ".$arrS[1].($SumStat ? "<div class='SumStat' title='РћС‚РјРµС‚РєРё РІ РґСЂСѓРіРёС… РіСЂСѓРїРїР°С… РїРѕ С‚РµРєСѓС‰РµР№ РґРёСЃС†РёРїР»РёРЅРµ'>".$SumStat."</div>" : "")."</div>\n";
                 }
 
                 $arrStud[$i] = $arrS[0];
@@ -430,9 +430,9 @@ function GroupViewP()
                 $resultStat = mysqli_query($dbMain, "SELECT SUM(n10+n11+n12+n13+n14+n15+n16+n17+n18+n19+n23+n24+n25+n28+n31+n32+n33+n34+n35+n36+n37+n40+n41+n42+n43+n44+n45) FROM aerostat WHERE idLessons=".$_GET['idPredmet']." AND idStud=".$arrStud[0]." AND nGroup<>'".$_GET['nGroup']."' GROUP BY idStud");
                 if (mysqli_num_rows($resultStat) >= 1) { List($SumStat) = mysqli_fetch_row($resultStat); } else { $SumStat=0; }
                 if($arrStud[0] == $_GET['IdCaptain']){
-                  $preStud .= "<div class='fio_student' data-idStudent='".$arrStud[0]."' title='Капитан шлюпки'>".$i.". <strong>".$arrStud[1]."</strong>".($SumStat ? "<div class='SumStat' title='Отметки в других группах по текущей дисциплине'>".$SumStat."</div>" : "")."</div>\n";
+                  $preStud .= "<div class='fio_student' data-idStudent='".$arrStud[0]."' title='РљР°РїРёС‚Р°РЅ С€Р»СЋРїРєРё'>".$i.". <strong>".$arrStud[1]."</strong>".($SumStat ? "<div class='SumStat' title='РћС‚РјРµС‚РєРё РІ РґСЂСѓРіРёС… РіСЂСѓРїРїР°С… РїРѕ С‚РµРєСѓС‰РµР№ РґРёСЃС†РёРїР»РёРЅРµ'>".$SumStat."</div>" : "")."</div>\n";
                 } else {
-                  $preStud .= "<div class='fio_student' data-idStudent='".$arrStud[0]."'>".$i.". ".$arrStud[1].($SumStat ? "<div class='SumStat' title='Отметки в других группах по текущей дисциплине'>".$SumStat."</div>" : "")."</div>\n";
+                  $preStud .= "<div class='fio_student' data-idStudent='".$arrStud[0]."'>".$i.". ".$arrStud[1].($SumStat ? "<div class='SumStat' title='РћС‚РјРµС‚РєРё РІ РґСЂСѓРіРёС… РіСЂСѓРїРїР°С… РїРѕ С‚РµРєСѓС‰РµР№ РґРёСЃС†РёРїР»РёРЅРµ'>".$SumStat."</div>" : "")."</div>\n";
                 }
 
                 $i++;
@@ -445,7 +445,7 @@ function GroupViewP()
     mysqli_free_result($resultL);
 
 
-    echo HeaderFooterGroup($retVal, "№ " . $_GET['nGroup'], $verC, $verS);
+    echo HeaderFooterGroup($retVal, "в„– " . $_GET['nGroup'], $verC, $verS);
 }
 
 
@@ -530,7 +530,7 @@ function Fakultet()
 
             $retVal .= "
       <div class='DialogP'>
-      <div class='titleBox'><H2>Группы</H2></div>
+      <div class='titleBox'><H2>Р“СЂСѓРїРїС‹</H2></div>
       ";
             $result = mssql_query("SELECT IdGroup, Name, IIF(IdF != ".$_GET['idF'].", 1, 0), IIF(IdCaptain!=null, IdCaptain, 0), IdF FROM dbo.Groups WHERE ".$sqlSO." ORDER BY Name, IdF", $dbStud);
             if (mssql_num_rows($result) >= 1) {
@@ -538,9 +538,9 @@ function Fakultet()
                 while ($arr = mssql_fetch_row($result)) {
                     if ($preChar != substr($arr[1], 0, 2)) $retVal .= "<div class='HRnext'></div>";
                     $preChar = substr($arr[1], 0, 2);
-                    $retVal .= "<div class='DialogGr'><strong>" . $arr[1] . "</strong>".($arr[2] ? "<div class='Inostr' title='Группа иностранных учащихся'>и</div>" : "")."<div class='GroupPL'>";
-                    $retVal .= "<a href='p.php?menuactiv=goG&idPrepod=" . $_SESSION['SesVar']['FIO'][0] . "&idKaf=" . $_SESSION['SesVar']['Prepod'][2] . "&idPredmet=" . $_GET['idPredmet'] . "&idF=" . $arr[4] . "&idGroup=" . $arr[0] . "&PL=0&nPredmet=" . $Pre . "&nF=" . $idName . "&nGroup=" . $arr[1] . "&IdCaptain=".$arr[3]."'>Практ.</a>&nbsp;&nbsp;&nbsp;";
-                    $retVal .= "<a href='p.php?menuactiv=goG&idPrepod=" . $_SESSION['SesVar']['FIO'][0] . "&idKaf=" . $_SESSION['SesVar']['Prepod'][2] . "&idPredmet=" . $_GET['idPredmet'] . "&idF=" . $arr[4] . "&idGroup=" . $arr[0] . "&PL=1&nPredmet=" . $Pre . "&nF=" . $idName . "&nGroup=" . $arr[1] . "&IdCaptain=".$arr[3]."'>Лекция</a>";
+                    $retVal .= "<div class='DialogGr'><strong>" . $arr[1] . "</strong>".($arr[2] ? "<div class='Inostr' title='Р“СЂСѓРїРїР° РёРЅРѕСЃС‚СЂР°РЅРЅС‹С… СѓС‡Р°С‰РёС…СЃСЏ'>Рё</div>" : "")."<div class='GroupPL'>";
+                    $retVal .= "<a href='p.php?menuactiv=goG&idPrepod=" . $_SESSION['SesVar']['FIO'][0] . "&idKaf=" . $_SESSION['SesVar']['Prepod'][2] . "&idPredmet=" . $_GET['idPredmet'] . "&idF=" . $arr[4] . "&idGroup=" . $arr[0] . "&PL=0&nPredmet=" . $Pre . "&nF=" . $idName . "&nGroup=" . $arr[1] . "&IdCaptain=".$arr[3]."'>РџСЂР°РєС‚.</a>&nbsp;&nbsp;&nbsp;";
+                    $retVal .= "<a href='p.php?menuactiv=goG&idPrepod=" . $_SESSION['SesVar']['FIO'][0] . "&idKaf=" . $_SESSION['SesVar']['Prepod'][2] . "&idPredmet=" . $_GET['idPredmet'] . "&idF=" . $arr[4] . "&idGroup=" . $arr[0] . "&PL=1&nPredmet=" . $Pre . "&nF=" . $idName . "&nGroup=" . $arr[1] . "&IdCaptain=".$arr[3]."'>Р›РµРєС†РёСЏ</a>";
                     $retVal .= "</div></div></div>\n";
                 }
             }
@@ -568,7 +568,7 @@ function MainF()
     $countPredmet = count($_SESSION['SesVar']['Predmet']);
     $retVal .= "
       <div class='DialogP'>
-      <div class='titleBox'><H2>Дисциплина</H2></div>
+      <div class='titleBox'><H2>Р”РёСЃС†РёРїР»РёРЅР°</H2></div>
    ";
 
     include_once 'configStudent.php';
@@ -611,7 +611,7 @@ function HeaderFooter($content, $title, $vC = '')
     </head>
     <body>
     <?php
-    //<div class="Exit"><a href="index.php?go=exit" title="Выхожу">Выхожу</a></div>
+    //<div class="Exit"><a href="index.php?go=exit" title="Р’С‹С…РѕР¶Сѓ">Р’С‹С…РѕР¶Сѓ</a></div>
     echo LevelView();
     ?>
     <div class="Header">
@@ -620,7 +620,7 @@ function HeaderFooter($content, $title, $vC = '')
 
     <?php echo $content; ?>
     <div style="clear:both;">&nbsp;</div>
-    <div class="support"><a href="help/index.html">Руководство пользователя "Эл. журнала"</a> <br> По техническим вопросам работы электронного журнала обращаться: 279-42-05 (вн. 506) </div>
+    <div class="support"><a href="help/index.html">Р СѓРєРѕРІРѕРґСЃС‚РІРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ "Р­Р». Р¶СѓСЂРЅР°Р»Р°"</a> <br> РџРѕ С‚РµС…РЅРёС‡РµСЃРєРёРј РІРѕРїСЂРѕСЃР°Рј СЂР°Р±РѕС‚С‹ СЌР»РµРєС‚СЂРѕРЅРЅРѕРіРѕ Р¶СѓСЂРЅР°Р»Р° РѕР±СЂР°С‰Р°С‚СЊСЃСЏ: 279-42-05 (РІРЅ. 506) </div>
     <div style="clear:both; margin-bottom:100px;">&nbsp;</div>
     </body>
     </html>
@@ -656,10 +656,17 @@ function HeaderFooterGroup($content, $title, $vC = '', $vS = '')
     </div>
     <?php echo $content; ?>
     <div style="clear:both;">&nbsp;</div>
-    <div class="export" alt="Экспортировать в Excel">
-        <a href="#" title="Экспортировать в Excel"><img src="img/csv.png"></a>
+    <div class="export" alt="Р­РєСЃРїРѕСЂС‚РёСЂРѕРІР°С‚СЊ РІ Excel">
+        <a href="#" title="Р­РєСЃРїРѕСЂС‚РёСЂРѕРІР°С‚СЊ РІ Excel"><img src="img/csv.png"></a>
     </div>
-    <div class="support"><a href="help/index.html">Руководство пользователя "Эл. журнала"</a> <br> По техническим вопросам работы электронного журнала обращаться: 279-42-05 (вн. 506) </div>
+    <div id="comment" title="РЎРѕРґРµСЂР¶Р°РЅРёРµ РєРѕРјРјРµРЅС‚Р°СЂРёСЏ Р±СѓРґРµС‚ РІРёРґРµРЅРѕ С‚РѕР»СЊРєРѕ РІР°Рј">РћСЃС‚Р°РІРёС‚СЊ РєРѕРјРјРµРЅС‚Р°СЂРёР№
+    	<!-- <div id="contentComment">
+    		<textarea rows="10" cols="45" maxlength="2500" placeholder="РќР°РїРёС€РёС‚Рµ Р·РґРµСЃСЊ..."></textarea><br>
+    		<button id="saveComment">РЎРѕС…СЂР°РЅРёС‚СЊ</button>
+    	</div> -->
+        <!-- <a href="#" title="Р­РєСЃРїРѕСЂС‚РёСЂРѕРІР°С‚СЊ РІ Excel"><img src="img/csv.png"></a> -->
+    </div>
+    <div class="support"><a href="help/index.html">Р СѓРєРѕРІРѕРґСЃС‚РІРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ "Р­Р». Р¶СѓСЂРЅР°Р»Р°"</a> <br> РџРѕ С‚РµС…РЅРёС‡РµСЃРєРёРј РІРѕРїСЂРѕСЃР°Рј СЂР°Р±РѕС‚С‹ СЌР»РµРєС‚СЂРѕРЅРЅРѕРіРѕ Р¶СѓСЂРЅР°Р»Р° РѕР±СЂР°С‰Р°С‚СЊСЃСЏ: 279-42-05 (РІРЅ. 506) </div>
     <div style="clear:both; margin-bottom:100px;">&nbsp;</div>
     </body>
     </html>
@@ -697,9 +704,9 @@ function HeaderFooterGroupL($content, $title, $vC = '', $vS = '')
     <?php echo $content; ?>
     <div style="clear:both;">&nbsp;</div>
     <div class="export">
-        <a href="#" title="Экспортировать в Excel"><img src="img/csv.png"></a>
+        <a href="#" title="Р­РєСЃРїРѕСЂС‚РёСЂРѕРІР°С‚СЊ РІ Excel"><img src="img/csv.png"></a>
     </div>
-    <div class="support"><a href="help/index.html">Руководство пользователя "Эл. журнала"</a> <br> По техническим вопросам работы электронного журнала обращаться: 279-42-05 (вн. 506) </div>
+    <div class="support"><a href="help/index.html">Р СѓРєРѕРІРѕРґСЃС‚РІРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ "Р­Р». Р¶СѓСЂРЅР°Р»Р°"</a> <br> РџРѕ С‚РµС…РЅРёС‡РµСЃРєРёРј РІРѕРїСЂРѕСЃР°Рј СЂР°Р±РѕС‚С‹ СЌР»РµРєС‚СЂРѕРЅРЅРѕРіРѕ Р¶СѓСЂРЅР°Р»Р° РѕР±СЂР°С‰Р°С‚СЊСЃСЏ: 279-42-05 (РІРЅ. 506) </div>
     <div style="clear:both; margin-bottom:100px;">&nbsp;</div>
     </body>
     </html>
@@ -712,27 +719,27 @@ function HeaderFooterGroupL($content, $title, $vC = '', $vS = '')
 function StudentView($content, $contentO = '')
 {
 
-    $ret = "<div id='form-lesson' title='Создание занятия'>
+    $ret = "<div id='form-lesson' title='РЎРѕР·РґР°РЅРёРµ Р·Р°РЅСЏС‚РёСЏ'>
     <form>
         <fieldset>
             <div class='box'>
             <div class='dat'>
-                <b align='center'>Дата занятия</b><br>
+                <b align='center'>Р”Р°С‚Р° Р·Р°РЅСЏС‚РёСЏ</b><br>
                 <div id='date_col'>
-                    <input type='text' id='lesson-date' required class='datepicker' value='" . date('d.m.Y') . "' placeholder='дд.мм.гггг'>
+                    <input type='text' id='lesson-date' required class='datepicker' value='" . date('d.m.Y') . "' placeholder='РґРґ.РјРј.РіРіРіРі'>
                 </div>
             </div>
             <div class='number_theme'>
-                <b align='center'>№ темы</b><br>
+                <b align='center'>в„– С‚РµРјС‹</b><br>
                 <input type='text' id='number_theme' maxlength='3' onkeydown='return checkNumberThemeLesson(event);' onkeyup=\"this.value=this.value.replace(/[^0-9]/,'');\">
             </div>
                 
                 <br>
-                <label><input type='radio' class='type_lesson' id='simple_lesson_rb' name='type_lesson' value='sl' checked><b class='type_lesson'>Обычное занятие</b></label>
+                <label><input type='radio' class='type_lesson' id='simple_lesson_rb' name='type_lesson' value='sl' checked><b class='type_lesson'>РћР±С‹С‡РЅРѕРµ Р·Р°РЅСЏС‚РёРµ</b></label>
                 <br><br>
-                <label><input type='radio' class='type_lesson' id='colloquium_rb' name='type_lesson' value='col'><b class='type_lesson'>Коллок. / Ист. болезни</b></label>
+                <label><input type='radio' class='type_lesson' id='colloquium_rb' name='type_lesson' value='col'><b class='type_lesson'>РљРѕР»Р»РѕРє. / РСЃС‚. Р±РѕР»РµР·РЅРё</b></label>
                 <br><br>
-                <label><input type='radio' class='type_lesson' id='exam_rb' name='type_lesson' value='exam'><b class='type_lesson'>Аттестация</b></label>
+                <label><input type='radio' class='type_lesson' id='exam_rb' name='type_lesson' value='exam'><b class='type_lesson'>РђС‚С‚РµСЃС‚Р°С†РёСЏ</b></label>
                 <br><br>
             </div>
         </fieldset>
@@ -740,7 +747,7 @@ function StudentView($content, $contentO = '')
 </div>
 
 
-<div id='form-edit' title='Редактировать отметку'>
+<div id='form-edit' title='Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РѕС‚РјРµС‚РєСѓ'>
     <form id='form-edit'>
         <fieldset>
             <div class='panel'>
@@ -748,25 +755,25 @@ function StudentView($content, $contentO = '')
 
                     <hr class='marg-line'>
                     
-                    <span class='tool' title='Отметка: один'>1</span>
+                    <span class='tool' title='РћС‚РјРµС‚РєР°: РѕРґРёРЅ'>1</span>
                     <span class='space'></span>
-                    <span class='tool' title='Отметка: два'>2</span>
+                    <span class='tool' title='РћС‚РјРµС‚РєР°: РґРІР°'>2</span>
                     <span class='space'></span>
-                    <span class='tool' title='Отметка: три'>3</span>
+                    <span class='tool' title='РћС‚РјРµС‚РєР°: С‚СЂРё'>3</span>
                     <span class='space'></span>
-                    <span class='tool' title='Отметка: четыре'>4</span>
+                    <span class='tool' title='РћС‚РјРµС‚РєР°: С‡РµС‚С‹СЂРµ'>4</span>
                     <span class='space'></span>
-                    <span class='tool' title='Отметка: пять'>5</span>
+                    <span class='tool' title='РћС‚РјРµС‚РєР°: РїСЏС‚СЊ'>5</span>
                     <span class='space'></span>
-                    <span class='tool' title='Отметка: шесть'>6</span>
+                    <span class='tool' title='РћС‚РјРµС‚РєР°: С€РµСЃС‚СЊ'>6</span>
                     <span class='space'></span>
-                    <span class='tool' title='Отметка: семь'>7</span>
+                    <span class='tool' title='РћС‚РјРµС‚РєР°: СЃРµРјСЊ'>7</span>
                     <span class='space'></span>
-                    <span class='tool' title='Отметка: восемь'>8</span>
+                    <span class='tool' title='РћС‚РјРµС‚РєР°: РІРѕСЃРµРјСЊ'>8</span>
                     <span class='space'></span>
-                    <span class='tool' title='Отметка: девять'>9</span>
+                    <span class='tool' title='РћС‚РјРµС‚РєР°: РґРµРІСЏС‚СЊ'>9</span>
                     <span class='space'></span>
-                    <span class='tool' title='Отметка: десять'>10</span>
+                    <span class='tool' title='РћС‚РјРµС‚РєР°: РґРµСЃСЏС‚СЊ'>10</span>
 
                 <br><br>
 
@@ -776,38 +783,38 @@ function StudentView($content, $contentO = '')
                        onkeydown='return proverka(event,1);' onblur='return proverka(event,1);'>
                 <input class='inp_cell' id='inp_2' type='text' maxlength='6' autocomplete='off'
                        onkeydown='return proverka(event,2);' onblur='return proverka(event,2);'>
-                <button id='add_grade_input' class='add_grade' title='Для добавления дополнительной оценки нажмите на кнопку!'>+</button>
+                <button id='add_grade_input' class='add_grade' title='Р”Р»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕР№ РѕС†РµРЅРєРё РЅР°Р¶РјРёС‚Рµ РЅР° РєРЅРѕРїРєСѓ!'>+</button>
 
 
                 <br><br>
             </div>
         </fieldset>
         <hr class='marg-line'>
-        <button id='close' class='attention'>Отмена</button>
-        <button id='edit' class='button'>Сохранить</button>        
+        <button id='close' class='attention'>РћС‚РјРµРЅР°</button>
+        <button id='edit' class='button'>РЎРѕС…СЂР°РЅРёС‚СЊ</button>        
 
     </form>
 </div>
 
-<div id=\"form-edit-date\" title=\"Редактирование даты занятия\">
+<div id=\"form-edit-date\" title=\"Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РґР°С‚С‹ Р·Р°РЅСЏС‚РёСЏ\">
     <form>
         <fieldset>
             <div class=\"box\">
             <div class='dat'>
-                <b align='center'>Дата занятия</b><br>
-                <input type='text' id='edit-lesson-date' required class='datepicker' value='" . date('d.m.Y') . "' placeholder='дд.мм.гггг'>
+                <b align='center'>Р”Р°С‚Р° Р·Р°РЅСЏС‚РёСЏ</b><br>
+                <input type='text' id='edit-lesson-date' required class='datepicker' value='" . date('d.m.Y') . "' placeholder='РґРґ.РјРј.РіРіРіРі'>
             </div>
             <div class='number_theme'>
-                <b align='center'>№ темы</b><br>
+                <b align='center'>в„– С‚РµРјС‹</b><br>
                 <input type='text' id='edit_number_theme' maxlength='3' onkeydown='return checkNumberThemeLesson(event);' onkeyup=\"this.value=this.value.replace(/[^0-9]/,'');\">
             </div>
                 
                 <br>
-                <label><input type='radio' class='edit_type_lesson' id='edit_simple_lesson_rb' name='type_lesson' value='0' checked><b class='type_lesson'>Обычное занятие</b></label>
+                <label><input type='radio' class='edit_type_lesson' id='edit_simple_lesson_rb' name='type_lesson' value='0' checked><b class='type_lesson'>РћР±С‹С‡РЅРѕРµ Р·Р°РЅСЏС‚РёРµ</b></label>
                 <br><br>
-                <label><input type='radio' class='edit_type_lesson' id='edit_colloquium_rb' name='type_lesson' value='1'><b class='type_lesson'>Коллок. / Ист. болезни</b></label>
+                <label><input type='radio' class='edit_type_lesson' id='edit_colloquium_rb' name='type_lesson' value='1'><b class='type_lesson'>РљРѕР»Р»РѕРє. / РСЃС‚. Р±РѕР»РµР·РЅРё</b></label>
                 <br><br>
-                <label><input type='radio' class='edit_type_lesson' id='edit_exam_rb' name='type_lesson' value='2'><b class='type_lesson'>Аттестация</b></label>
+                <label><input type='radio' class='edit_type_lesson' id='edit_exam_rb' name='type_lesson' value='2'><b class='type_lesson'>РђС‚С‚РµСЃС‚Р°С†РёСЏ</b></label>
                 <br>
             </div>
         </fieldset>
@@ -820,7 +827,7 @@ function StudentView($content, $contentO = '')
 </div>
 
 
-<div id='form-show' title='Отметки в других группах'>
+<div id='form-show' title='РћС‚РјРµС‚РєРё РІ РґСЂСѓРіРёС… РіСЂСѓРїРїР°С…'>
     <form>
    <h3 id='sub'></h3>
    <h2 id='fio'></h2>
@@ -828,14 +835,21 @@ function StudentView($content, $contentO = '')
     </form>
 </div>
 
+<div id='form-comment'>
+    <form>
+	   	<textarea rows='10' cols='45' placeholder='РќР°РїРёС€РёС‚Рµ Р·РґРµСЃСЊ...'></textarea><br>
+    	<button id='saveComment'>РЎРѕС…СЂР°РЅРёС‚СЊ</button>
+    </form>
+</div>
+
 <div class='container-list'>
 
     <div class='tools' align='center'>
-        <button id='create_lesson'>Новое занятие</button>
+        <button id='create_lesson'>РќРѕРІРѕРµ Р·Р°РЅСЏС‚РёРµ</button>
     </div>
     <div class='container'>
         <div class='fio'>
-            <div class='title'>ФИО</div>\n" . $content . "
+            <div class='title'>Р¤РРћ</div>\n" . $content . "
         </div>
 
         <div class='result_box'><div class='date_col hidden'></div>" . $contentO . "
@@ -855,18 +869,18 @@ function StudentView($content, $contentO = '')
 
 function StudentViewL($content, $contentO = '')
 {
-    $ret = "<div id='form-lesson' title='Создание лекции'>
+    $ret = "<div id='form-lesson' title='РЎРѕР·РґР°РЅРёРµ Р»РµРєС†РёРё'>
     <form>
         <fieldset>
             <div class='box'>
             <div class='dat'>
-                <b align='center'>Дата занятия</b>
+                <b align='center'>Р”Р°С‚Р° Р·Р°РЅСЏС‚РёСЏ</b>
                 <div id='date_col'>
                     <input type='text' id='lesson-date' required class='datepicker' value='" . date('d.m.Y') . "'>
                 </div>
             </div>
             <div class='number_theme'>
-                <b align='center'>№ темы</b><br>
+                <b align='center'>в„– С‚РµРјС‹</b><br>
                 <input type='text' id='number_theme' maxlength='3' onkeydown='return checkNumberThemeLesson(event);' onkeyup=\"this.value=this.value.replace(/[^0-9]/,'');\">
             </div>
                 
@@ -878,7 +892,7 @@ function StudentViewL($content, $contentO = '')
 
 
 
-<div id='form-edit' title='Редактирование отметки'>
+<div id='form-edit' title='Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РѕС‚РјРµС‚РєРё'>
     <form id='form-edit'>
         <fieldset>
             <div class='panel'>
@@ -890,24 +904,24 @@ function StudentViewL($content, $contentO = '')
                        onkeydown='return proverka(event,0);' onblur='return proverka(event,0);' autocomplete='off'><br><br>
         </fieldset>      
                 <hr class='marg-line'>
-                <button id='close' class='attention'>Отмена</button>
-                <button id='edit' class='button'>Сохранить</button>
+                <button id='close' class='attention'>РћС‚РјРµРЅР°</button>
+                <button id='edit' class='button'>РЎРѕС…СЂР°РЅРёС‚СЊ</button>
                                 
             </div>
         
     </form>
 </div>
 
-<div id=\"form-edit-date\" title=\"Редактирование даты занятия\">
+<div id=\"form-edit-date\" title=\"Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РґР°С‚С‹ Р·Р°РЅСЏС‚РёСЏ\">
     <form>
         <fieldset>
             <div class=\"box\">
             <div class='dat'>
-                <b align='center'>Дата занятия</b><br>
-                <input type='text' id='edit-lesson-date' required class='datepicker' value='" . date('d.m.Y') . "' placeholder='дд.мм.гггг'>
+                <b align='center'>Р”Р°С‚Р° Р·Р°РЅСЏС‚РёСЏ</b><br>
+                <input type='text' id='edit-lesson-date' required class='datepicker' value='" . date('d.m.Y') . "' placeholder='РґРґ.РјРј.РіРіРіРі'>
             </div>
             <div class='number_theme'>
-                <b align='center'>№ темы</b><br>
+                <b align='center'>в„– С‚РµРјС‹</b><br>
                 <input type='text' id='edit_number_theme' maxlength='3' onkeydown='return checkNumberThemeLesson(event);' onkeyup=\"this.value=this.value.replace(/[^0-9]/,'');\">
             </div>
                 
@@ -921,7 +935,7 @@ function StudentViewL($content, $contentO = '')
     <span id='log_text'></span>
 </div>
 
-<div id='form-show' title='Отметки в других группах'>
+<div id='form-show' title='РћС‚РјРµС‚РєРё РІ РґСЂСѓРіРёС… РіСЂСѓРїРїР°С…'>
     <form>
    <h3 id='sub'></h3>
    <h2 id='fio'></h2>
@@ -933,11 +947,11 @@ function StudentViewL($content, $contentO = '')
 <div class='container-list'>
 
     <div class='tools' align='center'>
-        <button id='create_lesson'>Новая лекция</button>
+        <button id='create_lesson'>РќРѕРІР°СЏ Р»РµРєС†РёСЏ</button>
     </div>
     <div class='container'>
         <div class='fio'>
-            <div class='title'>ФИО</div>\n" . $content . "
+            <div class='title'>Р¤РРћ</div>\n" . $content . "
         </div>
 
         <div class='result_box'><div class='date_col hidden'></div>" . $contentO . "
@@ -972,7 +986,7 @@ function LevelView()
             }
         }
     }
-    return "<div class='Exit'>".$preDiv."<a href='exit.php'><H2>Выход</H2></a></div><div class='C'></div>";
+    return "<div class='Exit'>".$preDiv."<a href='exit.php'><H2>Р’С‹С…РѕРґ</H2></a></div><div class='C'></div>";
 }
 
 ?>

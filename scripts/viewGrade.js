@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+$(document).ready(function () {
     nGroup=$("input#nGroup").val();
     idStudent = $("input#idStudent").val();
     idSubject = "";
@@ -61,7 +61,7 @@
                             obj_this_contentGrade.find('div.Otmetka').each(function () {
                                 $(this).html(Decrypt($(this).html()));
                                 var isNn=$(this).attr('data-Nn');
-                                if (isNn==1) {$(this).parent().append("<div class='bullDec'>&bull;</div>")};
+                                if (isNn==1) {$(this).parent().append("<div class='bullDec' title='Занятие было ранее пропущено'>&bull;</div>")};
                                 
                                 smallText($(this));
                                 var block = 0;
